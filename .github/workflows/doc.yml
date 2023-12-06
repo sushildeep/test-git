@@ -1,0 +1,57 @@
+name: Build and Deploy Doc.Nuxeo.com
+
+on:
+  pull_request:
+    branches:
+<<<<<<< HEAD
+      - master
+      - development
+
+jobs:
+  set-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Doc Environment based on branch name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            TARGET_BRANCH=${{ github.event.pull_request.head.ref }}
+            
+            if [[ "$TARGET_BRANCH" == "main" ]]; then
+              echo "Environment: production"
+              echo "DOC_ENV=production" >> $GITHUB_ENV
+            elif [[ "$TARGET_BRANCH" == "development" ]]; then
+              echo "Environment: development"
+              echo "DOC_ENV=development" >> $GITHUB_ENV
+            else
+              echo "Environment: Wrong Environment"
+              echo "DOC_ENV=Wrong Environment" >> $GITHUB_ENV
+=======
+        - main
+        - development
+    
+  jobs:
+    set-environment:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Set Doc Environment based on branch name
+          run: |
+            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              TARGET_BRANCH=${{ github.event.pull_request.head.ref }}
+              
+              if [[ "$TARGET_BRANCH" == "main" ]]; then
+                echo "Environment: production"
+                echo "::set-env name=DOC_ENV::production"
+              elif [[ "$TARGET_BRANCH" == "development" ]]; then
+                echo "Environment: development"
+                echo "::set-env name=DOC_ENV::development"
+              else
+                echo "Environment: Wrong Environment"
+                echo "::set-env name=DOC_ENV::Wrong Environment"
+              fi
+>>>>>>> a129c7dbe3af64e467300ce31bc956f0608bda06
+            fi
+          fi
+
+      - name: Display Environment Variable
+        run: |
+          echo "DOC_ENV: $DOC_ENV"
