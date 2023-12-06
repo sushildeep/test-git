@@ -8,7 +8,7 @@ on:
 jobs:
   set-environment:
     environment: 
-      name: ${{ github.event.pull_request_target }} 
+      name: ${{ github.event.pull_request.base_ref }} 
     runs-on: ubuntu-latest
     steps:
       
