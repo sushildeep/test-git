@@ -25,9 +25,8 @@ jobs:
               echo "MY_ENV=unknown" >> $GITHUB_ENV
             fi
           fi
-      - name: Display Environment Variable
-        run: |
-          echo "DOC_ENV: $DOC_ENV"
+          echo "env is $Name"
+    
 
   display-environment:
     needs: set-environment
