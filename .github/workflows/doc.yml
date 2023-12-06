@@ -27,5 +27,5 @@ jobs:
           fi
       - name: Display Environment Variable
         run: |
-          echo "is env $env.Name"
+          echo "${{env.Name}}"
       
