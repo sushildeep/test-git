@@ -1,19 +1,35 @@
 name: Build and Deploy
+
 on:
   pull_request:
     branches:
-      -  main
+      - main
       - development
 
 jobs:
   set-environment:
-    environment: 
-      name: ${{ github.base_ref }} 
     runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.set-environment.outputs.env }}
     steps:
-      
+      - name: Set Environment based on branch name
+        id: set-environment
+        run: echo "env=${{ github.base_ref }}" >> $GITHUB_ENV
       - name: Display Environment Variable
         run: |
           echo "environment: ${{ vars.NAME }}"
           echo "environment: ${{ vars.TEST }}"
+  deploy:
+    needs: set-environment
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.set-environment.outputs.env }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14'
       
