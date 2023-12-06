@@ -18,6 +18,7 @@ jobs:
       - name: Display Environment Variable
         run: |
           echo "${{ steps.set-environment.outputs.env }}"
+          echo "env: ${{ vars.NAME }}"
 
   deploy:
     needs: set-environment
