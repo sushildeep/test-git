@@ -25,11 +25,7 @@ jobs:
               echo "MY_ENV=unknown" >> $GITHUB_ENV
             fi
           fi
-          echo "env is $Name"
-    
-
-  display-environment:
-    needs: set-environment
-    runs-on: ubuntu-latest
-    steps:
+      - name: Display Environment Variable
+        run: |
+          echo "is env $Name"
       
