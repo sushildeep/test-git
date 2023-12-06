@@ -27,5 +27,6 @@ jobs:
           fi
       - name: Display Environment Variable
         run: |
-          echo "${{vars.NAME}}"
+          echo "ENV_CONTEXT_VAR: ${{ vars.ENV_CONTEXT_VAR }}"
+          echo "environment: ${{ vars.NAME }}"
       
