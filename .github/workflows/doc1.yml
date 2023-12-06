@@ -15,4 +15,5 @@ jobs:
       - name: Display Environment Variable
         run: |
           echo "environment: ${{ vars.NAME }}"
+          echo "environment: ${{ vars.TEST }}"
       
