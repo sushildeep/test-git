@@ -17,8 +17,8 @@ jobs:
         run: echo "env=${{ github.base_ref }}" >> $GITHUB_ENV
       - name: Display Environment Variable
         run: |
-          echo "environment: ${{ vars.NAME }}"
-          echo "environment: ${{ vars.TEST }}"
+          echo "${{ steps.set-environment.outputs.env }}"
+
   deploy:
     needs: set-environment
     runs-on: ubuntu-latest
