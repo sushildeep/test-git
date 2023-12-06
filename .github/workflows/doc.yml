@@ -27,5 +27,5 @@ jobs:
           fi
       - name: Display Environment Variable
         run: |
-          echo "${{env.Name}}"
+          echo "${{vars.Name}}"
       
