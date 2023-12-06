@@ -25,11 +25,12 @@ jobs:
               echo "MY_ENV=unknown" >> $GITHUB_ENV
             fi
           fi
+      - name: Display Environment Variable
+        run: |
+          echo "DOC_ENV: $DOC_ENV"
 
   display-environment:
     needs: set-environment
     runs-on: ubuntu-latest
     steps:
-      - name: Display Environment Variable
-        run: |
-          echo "DOC_ENV: $DOC_ENV"
+      
