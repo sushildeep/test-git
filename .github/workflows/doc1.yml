@@ -1,0 +1,20 @@
+name: Build and Deploy
+
+on:
+  pull_request:
+    branches:
+      -  main
+      - development
+
+jobs:
+  set-environment:
+    environment: 
+      name: ${{ github.event.pull_request.head.ref }} 
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Display Environment Variable
+        run: |
+          echo "ENV_CONTEXT_VAR: ${{ vars.ENV_CONTEXT_VAR }}"
+          echo "environment: ${{ vars.NAME }}"
+      
