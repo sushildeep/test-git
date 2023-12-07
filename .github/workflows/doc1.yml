@@ -12,20 +12,19 @@ jobs:
     outputs:
       my_env: ${{ steps.set-output.outputs.my_env }}
     steps:
-        - name: Set Doc Environment based on branch name
-          run: |
-              TARGET_BRANCH=${{ github.events.ref }}
-              if [[ "$TARGET_BRANCH" == "master" ]]; then
-                echo "Environment: production"
-                echo "::set-env name=DOC_ENV::production"
-              elif [[ "$TARGET_BRANCH" == "development" ]]; then
-                echo "Environment: development"
-                echo "::set-env name=DOC_ENV::development"
-              else
-                echo "Environment: Wrong Environment"
-                echo "::set-env name=DOC_ENV::Wrong Environment"
-              fi
-            fi
+      - name: Set Doc Environment based on branch name
+        run: |
+          TARGET_BRANCH=${{ github.ref }}
+          if [[ "$TARGET_BRANCH" == "refs/heads/main" ]]; then
+            echo "Environment: production"
+            echo "::set-env name=DOC_ENV::production"
+          elif [[ "$TARGET_BRANCH" == "refs/heads/development" ]]; then
+            echo "Environment: development"
+            echo "::set-env name=DOC_ENV::development"
+          else
+            echo "Environment: Wrong Environment"
+            echo "::set-env name=DOC_ENV::Wrong Environment"
+          fi
 
   display-output:
     needs: set-output
@@ -38,5 +37,5 @@ jobs:
           echo "My Environment: ${{ needs.set-output.outputs.my_env }}"
       - name: Display Environment Variable
         run: |
-          echo "ENV_CONTEXT_VAR: ${{ vars.ENV_CONTEXT_VAR }}"
-          echo "environment: ${{ vars.NAME }}"
+          echo "ENV_CONTEXT_VAR: ${{ env.ENV_CONTEXT_VAR }}"
+          echo "environment: ${{ env.DOC_ENV }}"
