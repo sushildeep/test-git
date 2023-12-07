@@ -1,22 +1,23 @@
-name: Build and Deploy sushiltest1
+name: Build and Deploy
+
 on:
+  push:
     branches:
-        - main
-        - development
+      - main
+      - development
+
 jobs:
   set-environment:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Set Doc Environment based on branch name
-          run: |
-              TARGET_BRANCH=${{ github.ref }}
-              if [[ "$TARGET_BRANCH" == "main" ]]; then
-                echo "Environment: production"
-              elif [[ "$TARGET_BRANCH" == "development" ]]; then
-                echo "Environment: development"
-              else
-                echo "Environment: Wrong Environment"
-              fi
-            echo "environment: ${{ env.NAME }}"
-            echo "environment: ${{ env.TEST }}"
-      
+    runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/development' && 'development' || '' }}
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Display Environment Variable
+        run: |
+
+          echo "environment: ${{ vars.NAME }}"
