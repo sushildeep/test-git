@@ -23,6 +23,6 @@ jobs:
                 echo "::set-env name=DOC_ENV::Wrong Environment"
               fi
             fi
-          echo "environment: ${{ vars.NAME }}"
-          echo "environment: ${{ vars.TEST }}"
+            echo "environment: ${{ vars.NAME }}"
+            echo "environment: ${{ vars.TEST }}"
       
