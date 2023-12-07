@@ -1,27 +1,24 @@
-name: Build and Deploy sushiltest1
+name: Set Output Variable Example
 
 on:
   push:
     branches:
       - main
-      - development
 
 jobs:
-  set-environment:
+  set-output:
+    runs-on: ubuntu-latest
+    outputs:
+      my_env: ${{ steps.set-output.outputs.my_env }}
+    steps:
+      - name: Set Output Variable
+        id: set-output
+        run: echo "::set-output name=my_env::production"
+
+  display-output:
+    needs: set-output
     runs-on: ubuntu-latest
     steps:
-      - name: Set Doc Environment based on branch name
+      - name: Display Output Variable
         run: |
-          TARGET_BRANCH=${{ github.ref }}
-          if [[ "$TARGET_BRANCH" == "refs/heads/main" ]]; then
-            echo "Environment: production"
-            echo "NAME=production" >> $GITHUB_ENV
-          elif [[ "$TARGET_BRANCH" == "refs/heads/development" ]]; then
-            echo "Environment: development"
-            echo "NAME=development" >> $GITHUB_ENV
-          else
-            echo "Environment: Wrong Environment"
-            echo "NAME=unknown" >> $GITHUB_ENV
-          fi
-          echo "environment: ${{ vars.NAME }}"
-          echo "environment: ${{ vars.TEST }}"
+          echo "My Environment: ${{ needs.set-output.outputs.my_env }}"
