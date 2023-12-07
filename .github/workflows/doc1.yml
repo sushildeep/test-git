@@ -1,9 +1,10 @@
 name: Build and Deploy sushiltest1
 
 on:
-  branches:
-    - main
-    - development
+  push:
+    branches:
+      - main
+      - development
 
 jobs:
   set-environment:
