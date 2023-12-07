@@ -20,5 +20,4 @@ jobs:
       - name: Display Environment Variable
         run: |
 
-          echo "environment: ${{ vars.NAME }}"
           echo "secrets: ${{secrets.name}}"
