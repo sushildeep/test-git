@@ -1,36 +1,28 @@
-name: Build and Deploy
-
-on:
+name: Build and Deploy Doc.Nuxeo.com
+  on:
   pull_request:
     branches:
-      - main
-      - development
-
-jobs:
-  set-environment:
-    runs-on: ubuntu-latest
-    outputs:
-      env: ${{ steps.set-environment.outputs.env }}
-    steps:
-      - name: Set Environment based on branch name
-        id: set-environment
-        run: echo "env=${{ github.base_ref }}" >> $GITHUB_ENV
-      - name: Display Environment Variable
-        run: |
-          echo "${{ steps.set-environment.outputs.env }}"
-          echo "env: ${{ vars.NAME }}"
-
-  deploy:
-    needs: set-environment
-    runs-on: ubuntu-latest
-    environment:
-      name: ${{ needs.set-environment.outputs.env }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '14'
+        - master
+        - development
+  jobs:
+    set-environment:
+      runs-on: doc
+      steps:
+        - name: Set Doc Environment based on branch name
+          run: |
+            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              TARGET_BRANCH=${{ github.head_ref }}
+              if [[ "$TARGET_BRANCH" == "master" ]]; then
+                echo "Environment: production"
+                echo "::set-env name=DOC_ENV::production"
+              elif [[ "$TARGET_BRANCH" == "development" ]]; then
+                echo "Environment: development"
+                echo "::set-env name=DOC_ENV::development"
+              else
+                echo "Environment: Wrong Environment"
+                echo "::set-env name=DOC_ENV::Wrong Environment"
+              fi
+            fi
+          echo "environment: ${{ vars.NAME }}"
+          echo "environment: ${{ vars.TEST }}"
       
