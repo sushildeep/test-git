@@ -19,7 +19,7 @@ jobs:
           if [[ "$TARGET_BRANCH" == "refs/heads/main" ]]; then
             echo "my_env=production" >> $GITHUB_ENV
             echo "my_env=production" >> $GITHUB_PATH
-          elif [[ "$TARGET_BRANCH" == "refs/heads/dev"* ]]; then
+          elif [[ "$TARGET_BRANCH" == "refs/heads/development" ]]; then
             echo "my_env=development" >> $GITHUB_ENV
             echo "my_env=development" >> $GITHUB_PATH
           else
@@ -38,4 +38,4 @@ jobs:
       - name: Display Environment Variable
         run: |
           echo "ENV_CONTEXT_VAR: ${{ env.ENV_CONTEXT_VAR }}"
-          echo "environment: ${{ env.NAME }}"
+          echo "environment: ${{ env.my_env }}"
