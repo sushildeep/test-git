@@ -20,6 +20,6 @@ jobs:
                 echo "Environment: Wrong Environment"
               fi
             fi
-            echo "environment: ${{ vars.NAME }}"
-            echo "environment: ${{ vars.TEST }}"
+            echo "environment: ${{ env.NAME }}"
+            echo "environment: ${{ evn.TEST }}"
       
