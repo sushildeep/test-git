@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - development
+env:
+  MY_ENV_VAR: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/development' && 'development' || 'unknown' }}
 
 jobs:
   set-output:
@@ -32,7 +34,7 @@ jobs:
     needs: set-output
     runs-on: ubuntu-latest
     environment:
-      name: ${{ needs.set-output.outputs.my_env }}
+      name: ${{ env.MY_ENV_VAR }}
     steps:
       - name: Display Output Variable
         run: |
@@ -40,4 +42,4 @@ jobs:
       - name: Display Environment Variable
         run: |
           echo "ENV_CONTEXT_VAR: ${{ env.ENV_CONTEXT_VAR }}"
-          echo "environment: ${{ env.my_env }}"
+          echo "environment: ${{ env.NAME }}"
