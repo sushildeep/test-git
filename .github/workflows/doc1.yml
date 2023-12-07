@@ -1,4 +1,4 @@
-${{ needs.set-output.outputs.my_env }}name: Set Output Variable Example
+name: Set Output Variable Example
 
 on:
   push:
