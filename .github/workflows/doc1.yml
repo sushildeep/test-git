@@ -9,7 +9,9 @@ on:
 jobs:
   set-environment:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'main' && 'production' || 'development' }}
+
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/development' && 'development' || '' }}
 
     steps:
       - name: Check out the repository
