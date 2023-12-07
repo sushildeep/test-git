@@ -1,20 +1,22 @@
-name: Build and Deploy
-
+name: Build and Deploy sushiltest1
 on:
-  pull_request:
     branches:
-      -  main
-      - development
-
+        - main
+        - development
 jobs:
   set-environment:
-    environment: 
-      name: ${{ github.event.pull_request_target }} 
-    runs-on: ubuntu-latest
-    steps:
-      
-      - name: Display Environment Variable
-        run: |
-          echo "ENV_CONTEXT_VAR: ${{ vars.ENV_CONTEXT_VAR }}"
-          echo "environment: ${{ vars.NAME }}"
+      runs-on: ubuntu-latest
+      steps:
+        - name: Set Doc Environment based on branch name
+          run: |
+              TARGET_BRANCH=${{ github.ref }}
+              if [[ "$TARGET_BRANCH" == "main" ]]; then
+                echo "Environment: production"
+              elif [[ "$TARGET_BRANCH" == "development" ]]; then
+                echo "Environment: development"
+              else
+                echo "Environment: Wrong Environment"
+              fi
+            echo "environment: ${{ env.NAME }}"
+            echo "environment: ${{ env.TEST }}"
       
