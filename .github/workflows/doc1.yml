@@ -23,5 +23,5 @@ jobs:
             echo "Environment: Wrong Environment"
             echo "NAME=unknown" >> $GITHUB_ENV
           fi
-          echo "environment: ${{ env.NAME }}"
-          echo "environment: ${{ env.TEST }}"
+          echo "environment: ${{ vars.NAME }}"
+          echo "environment: ${{ vars.TEST }}"
