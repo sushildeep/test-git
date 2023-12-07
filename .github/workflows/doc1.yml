@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev*
+      - 'dev*'
 
 jobs:
   set-output:
@@ -38,4 +38,4 @@ jobs:
       - name: Display Environment Variable
         run: |
           echo "ENV_CONTEXT_VAR: ${{ env.ENV_CONTEXT_VAR }}"
-          echo "environment: ${{ secrets.NAME }}"
+          echo "environment: ${{ env.NAME }}"
