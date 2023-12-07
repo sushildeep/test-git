@@ -10,7 +10,7 @@ jobs:
   set-output:
     runs-on: ubuntu-latest
     outputs:
-      my_env: ${{ needs.set-output.outputs.my_env }}
+      my_env: ${{ steps.test.outputs.my_env }}
     steps:
       - name: Set Doc Environment based on branch name
         id: test
@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Display Output Variable
         run: |
-          echo "My Environment: ${{ needs.set-output.outputs.my_env }}"
+          echo "My Environment: ${{ needs.job1.outputs.my_env }}"
       - name: Display Environment Variable
         run: |
           echo "ENV_CONTEXT_VAR: ${{ env.ENV_CONTEXT_VAR }}"
