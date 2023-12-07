@@ -14,13 +14,10 @@ jobs:
               TARGET_BRANCH=${{ github.head_ref }}
               if [[ "$TARGET_BRANCH" == "master" ]]; then
                 echo "Environment: production"
-                echo "::set-env name=DOC_ENV::production"
               elif [[ "$TARGET_BRANCH" == "development" ]]; then
-                echo "Environment: development"
-                echo "::set-env name=DOC_ENV::development"
+                echo "Environment: development
               else
                 echo "Environment: Wrong Environment"
-                echo "::set-env name=DOC_ENV::Wrong Environment"
               fi
             fi
             echo "environment: ${{ vars.NAME }}"
