@@ -20,5 +20,31 @@ jobs:
           else
             echo "Environment: Wrong Environment"
           fi
-          echo "environment: ${{ env.NAME }}"
-          echo "environment: ${{ env.TEST }}"
+name: Build and Deploy sushiltest1
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  set-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Doc Environment based on branch name
+        run: |
+          TARGET_BRANCH=${{ github.ref }}
+          if [[ "$TARGET_BRANCH" == "refs/heads/main" ]]; then
+            echo "Environment: production"
+            echo "NAME=production" >> $GITHUB_ENV
+          elif [[ "$TARGET_BRANCH" == "refs/heads/development" ]]; then
+            echo "Environment: development"
+            echo "NAME=development" >> $GITHUB_ENV
+          else
+            echo "Environment: Wrong Environment"
+            echo "NAME=unknown" >> $GITHUB_ENV
+          fi
+          echo "environment: ${{ vars.NAME }}"
+          echo "environment: ${{ vars.TEST }}"
+
