@@ -13,12 +13,16 @@ jobs:
       my_env: ${{ needs.set-output.outputs.my_env }}
     steps:
       - name: Set Doc Environment based on branch name
+      
         run: |
+        id: test
           TARGET_BRANCH=${{ github.ref }}
           if [[ "$TARGET_BRANCH" == "refs/heads/main" ]]; then
             echo "my_env=production" >> $GITHUB_ENV
+             echo "my_env=production" >> $GITHUB_OUTPUT
           elif [[ "$TARGET_BRANCH" == "refs/heads/development" ]]; then
             echo "my_env=development" >> $GITHUB_ENV
+             echo "my_env=development" >> $GITHUB_OUTPUT
           else
             echo "my_env=Wrong Environment" >> $GITHUB_ENV
           fi
@@ -27,7 +31,7 @@ jobs:
     needs: set-output
     runs-on: ubuntu-latest
     environment: 
-      name: ${{ needs.set-output.outputs.my_env }}
+      name: ${{ needs.set-output.steps.test.outputs.test }}
     steps:
       - name: Display Output Variable
         run: |
