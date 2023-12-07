@@ -1,45 +1,22 @@
-name: Set Output Variable Example
+name: Build and Deploy
 
 on:
   push:
     branches:
       - main
       - development
-env:
-  MY_ENV_VAR: ${{ github.ref == 'refs/heads/main' && 'production' || github.ref == 'refs/heads/development' && 'development' || 'unknown' }}
 
 jobs:
-  set-output:
+  set-environment:
     runs-on: ubuntu-latest
-    outputs:
-      my_env: ${{ steps.test.outputs.my_env }}
-    steps:
-      - name: Set Doc Environment based on branch name
-        id: test
-        run: |
-          TARGET_BRANCH=${{ github.ref }}
-          if [[ "$TARGET_BRANCH" == "refs/heads/main" ]]; then
-             echo "Environment: production"
-            echo "my_env=production" >> $GITHUB_ENV
-            echo "my_env=production" >> $GITHUB_PATH
-          elif [[ "$TARGET_BRANCH" == "refs/heads/development" ]]; then
-            echo "Environment: development"
-            echo "my_env=development" >> $GITHUB_ENV
-            echo "my_env=development" >> $GITHUB_PATH
-          else
-            echo "my_env=Wrong Environment" >> $GITHUB_ENV
-          fi
+    environment: ${{ github.ref_name == 'main' && 'production' || 'development' }}
 
-  display-output:
-    needs: set-output
-    runs-on: ubuntu-latest
-    environment:
-      name: ${{ env.MY_ENV_VAR }}
     steps:
-      - name: Display Output Variable
-        run: |
-          echo "My Environment: ${{ needs.job1.outputs.my_env }}"
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
       - name: Display Environment Variable
         run: |
+          echo "Environment: ${{ github.event_name }}"
           echo "ENV_CONTEXT_VAR: ${{ env.ENV_CONTEXT_VAR }}"
           echo "environment: ${{ env.NAME }}"
