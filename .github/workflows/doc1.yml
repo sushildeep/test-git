@@ -1,6 +1,5 @@
 name: Build and Deploy sushiltest1
 on:
-  pull_request:
     branches:
         - master
         - development
@@ -10,8 +9,7 @@ jobs:
       steps:
         - name: Set Doc Environment based on branch name
           run: |
-            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              TARGET_BRANCH=${{ github.head_ref }}
+              TARGET_BRANCH=${{ github.ref }}
               if [[ "$TARGET_BRANCH" == "master" ]]; then
                 echo "Environment: production"
               elif [[ "$TARGET_BRANCH" == "development" ]]; then
@@ -19,7 +17,6 @@ jobs:
               else
                 echo "Environment: Wrong Environment"
               fi
-            fi
             echo "environment: ${{ env.NAME }}"
             echo "environment: ${{ env.TEST }}"
       
