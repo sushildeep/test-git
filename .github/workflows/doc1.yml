@@ -15,7 +15,7 @@ jobs:
               if [[ "$TARGET_BRANCH" == "master" ]]; then
                 echo "Environment: production"
               elif [[ "$TARGET_BRANCH" == "development" ]]; then
-                echo "Environment: development
+                echo "Environment: development"
               else
                 echo "Environment: Wrong Environment"
               fi
