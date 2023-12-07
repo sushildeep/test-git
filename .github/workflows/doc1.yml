@@ -21,3 +21,4 @@ jobs:
         run: |
 
           echo "environment: ${{ vars.NAME }}"
+          echo "secrets: ${{secrets.name}}"
