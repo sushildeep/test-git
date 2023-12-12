@@ -1,22 +1,47 @@
-name: Build and Deploy sushiltest1
+name: Build and Deploy doc.nuxeo.com
+
 on:
+  push:
     branches:
-        - main
-        - development
+      - main
+      - development
+
 jobs:
   set-environment:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Set Doc Environment based on branch name
-          run: |
-              TARGET_BRANCH=${{ github.ref }}
-              if [[ "$TARGET_BRANCH" == "main" ]]; then
-                echo "Environment: production"
-              elif [[ "$TARGET_BRANCH" == "development" ]]; then
-                echo "Environment: development"
-              else
-                echo "Environment: Wrong Environment"
-              fi
-            echo "environment: ${{ env.NAME }}"
-            echo "environment: ${{ env.TEST }}"
+    runs-on: ubuntu-latest  # Replace 'doc' with the desired runner type or OS
+
+    environment:
+      name: ${{ github.ref == 'refs/heads/master' && 'production' || github.ref == 'refs/heads/development' && 'development' || '' }}
       
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14'
+
+  build-and-deploy:
+    needs: set-environment
+    runs-on: ubuntu-latest  # Replace 'doc' with the desired runner type or OS
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14'
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          
+      - name: Deploy to Server
+        run: |
+          rsync -Wxvuk --delete site/ ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/opt/www/doc/
+          sync redirects.txt ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/etc/nginx/redirects.txt
+          rsync redirects_pageid.txt ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/etc/nginx/redirects_pageid.
+    
