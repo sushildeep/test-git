@@ -8,7 +8,7 @@ on:
 
 jobs:
   set-environment:
-    runs-on: ubuntu-latest  # Replace 'doc' with the desired runner type or OS
+    runs-on: ubuntu-latest  
 
     environment:
       name: ${{ github.ref == 'refs/heads/master' && 'production' || github.ref == 'refs/heads/development' && 'development' || '' }}
@@ -22,17 +22,7 @@ jobs:
         with:
           node-version: '14'
 
-  build-and-deploy:
-    needs: set-environment
-    runs-on: ubuntu-latest  # Replace 'doc' with the desired runner type or OS
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '14'
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.8.0
