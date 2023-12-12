@@ -23,7 +23,7 @@ jobs:
         run: |
           ssh -i "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" \
             "${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}" \
-            "service nginx configtest && service nginx restart"
+            "service nginx configtest && service nginx stop"
 
       - name: Deploy to Server
         run: |
