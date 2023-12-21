@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: test
+    runs-on: sushil
 
     steps:
     - name: Checkout code
