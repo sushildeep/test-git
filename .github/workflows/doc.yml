@@ -1,32 +1,16 @@
-name: Build and Deploy Doc.Nuxeo.com
-
+name: Build and Deploy
 on:
-  pull_request:
+  push:
     branches:
-      -  main
+      - master
       - development
+  schedule:
+    - cron: '0 0 * * *' # Every night at midnight
+  workflow_dispatch:  # Manual triggering
 
 jobs:
-  set-environment:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Set Environment based on branch name
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            TARGET_BRANCH=${{ github.event.pull_request.head.ref }}
-            if [[ "$TARGET_BRANCH" == "main" ]]; then
-              echo "Environment: production"
-              echo "MY_ENV=production" >> $GITHUB_ENV
-            elif [[ "$TARGET_BRANCH" == "development" ]]; then
-              echo "Environment: development"
-              echo "MY_ENV=development" >> $GITHUB_ENV
-            else
-              echo "Environment: unknown"
-              echo "MY_ENV=unknown" >> $GITHUB_ENV
-            fi
-          fi
-      - name: Display Environment Variable
-        run: |
-          echo "ENV_CONTEXT_VAR: ${{ vars.ENV_CONTEXT_VAR }}"
-          echo "environment: ${{ vars.NAME }}"
-      
+      - name: Echo step
+        run: echo "This is an echo step"
