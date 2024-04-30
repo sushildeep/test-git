@@ -6,16 +6,17 @@ jobs:
   setup-pypi-url:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup PyPI API packages URL environment variable for the 'main' branch
+      - name: Setup PyPI API packages URL environment variable
         if: github.ref == 'refs/heads/main'
-        run: echo "Setting PyPI Package URL" && echo "PYPI_API_PACKAGE_URL=https://test.ssss.com/repository/pypi-nuxeopublic/simple" >> $GITHUB_ENV
-
-      - name: Setup PyPI API packages URL environment variable for non-'main' branches
+        run: echo "Setting PyPI Package URL for main branch"
+          env:
+            PYPI_API_PACKAGE_URL: "https://test.ssss.com/repository/pypi-nuxeopublic/simple"
+      - name: Setup PyPI API packages URL environment variable
         if: github.ref != 'refs/heads/main'
-        run: echo "Setting PyPI Package URL" && echo "PYPI_API_PACKAGE_URL=https://${{ env.PYPI_API_NUXEO_PACKAGE_USERNAME }}:${{ env.PYPI_API_NUXEO_PACKAGE_TOKEN }}@packages.nuxeo.com/repository/pypi-internal/simple" >> $GITHUB_ENV
-
-      - name: Debug environment variable
-        run: echo "PYPI_API_PACKAGE_URL:$PYPI_API_PACKAGE_URL"
-
-      - name: Print env value
-        run: echo "PYPI_API_PACKAGE_URL:${{ env.PYPI_API_PACKAGE_URL }}"
+        run: echo "Setting PyPI Package URL for non-main branch"
+          env:
+            PYPI_API_PACKAGE_URL: "https://${{ env.PYPI_API_NUXEO_PACKAGE_USERNAME }}:${{ env.PYPI_API_NUXEO_PACKAGE_TOKEN }}@packages.nuxeo.com/repository/pypi-internal/simple"
+      - name: Debug and print environment variable
+        run: |
+          echo "PYPI_API_PACKAGE_URL: $PYPI_API_PACKAGE_URL"
+          echo "PYPI_API_PACKAGE_URL from env: ${{ env.PYPI_API_PACKAGE_URL }}"
