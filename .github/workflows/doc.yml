@@ -17,6 +17,8 @@ jobs:
         run: echo "Setting PyPI Package URL"
         env:
           PYPI_API_PACKAGE_URL: "https://${{ env.PYPI_API_NUXEO_PACKAGE_USERNAME }}:${{ env.PYPI_API_NUXEO_PACKAGE_TOKEN }}@packages.nuxeo.com/repository/pypi-internal/simple"
+      - name: Debug environment variable
+        run: echo "PYPI_API_PACKAGE_URL:$PYPI_API_PACKAGE_URL"
 
       - name: Print env value
         run: echo "${{ env.PYPI_API_PACKAGE_URL }}"
