@@ -1,16 +1,23 @@
 name: Build and Deploy
 on:
-  push:
-    branches:
-      - master
-      - development
-  schedule:
-    - cron: '0 0 * * *' # Every night at midnight
   workflow_dispatch:  # Manual triggering
 
 jobs:
-  build-and-deploy:
+  setup-pypi-url:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo step
-        run: echo "This is an echo step"
+      - name: Setup PyPI API packages URL environment variable for the 'master' branch
+        if: github.ref == 'refs/heads/master'
+        run: echo "Setting PyPI Package URL"
+        env:
+          PYPI_API_PACKAGE_URL: "https://packages.nuxeo.com/repository/pypi-nuxeopublic/simple"
+
+      - name: Setup PyPI API packages URL environment variable for non-'master' branches
+        if: github.ref != 'refs/heads/master'
+        run: echo "Setting PyPI Package URL"
+        env:
+          PYPI_API_PACKAGE_URL: "https://${{ env.PYPI_API_NUXEO_PACKAGE_USERNAME }}:${{ env.PYPI_API_NUXEO_PACKAGE_TOKEN }}@packages.nuxeo.com/repository/pypi-internal/simple"
+
+      - name: Print env value
+        run: echo "${{ env.PYPI_API_PACKAGE_URL }}"
+
