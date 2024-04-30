@@ -10,7 +10,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: echo "Setting PyPI Package URL"
         env:
-          PYPI_API_PACKAGE_URL: "https://packages.nuxeo.com/repository/pypi-nuxeopublic/simple"
+          PYPI_API_PACKAGE_URL: "https://test.ssss.com/repository/pypi-nuxeopublic/simple"
 
       - name: Setup PyPI API packages URL environment variable for non-'master' branches
         if: github.ref != 'refs/heads/main'
