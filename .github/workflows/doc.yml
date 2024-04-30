@@ -21,3 +21,7 @@ jobs:
       - name: Print env value
         run: echo "${{ env.PYPI_API_PACKAGE_URL }}"
 
+      - name: Debug environment variable
+        run: echo "PYPI_API_PACKAGE_URL:$PYPI_API_PACKAGE_URL"
+
+
