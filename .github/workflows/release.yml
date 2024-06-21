@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       has_changes: ${{ steps.check_changes.outputs.changes }}
+      changes_list: ${{ steps.list_changes.outputs.changes_list }}
 
     steps:
       - name: Checkout
@@ -68,6 +69,15 @@ jobs:
             echo "changes=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: List changes
+        id: list_changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          last_successful_sha=$(grep 'last_successful_sha=' $GITHUB_STATE | cut -d'=' -f2)
+          latest_sha=$(grep 'sha=' $GITHUB_STATE | cut -d'=' -f2)
+          changes=$(git log --oneline $last_successful_sha..$latest_sha)
+          echo "changes_list=$changes" >> $GITHUB_OUTPUT
+
   release:
     runs-on: ${{ matrix.os }}
     needs: [check_changes]
@@ -82,6 +92,9 @@ jobs:
 
       - name: Proceed if there are changes
         if: needs.check_changes.outputs.has_changes == 'true'
-        run: echo "Proceeding with the release job."
+        run: |
+          echo "Proceeding with the release job."
+          echo "Changes since last successful run:"
+          echo "${{ needs.check_changes.outputs.changes_list }}"
 
       # Add the rest of your steps here...
