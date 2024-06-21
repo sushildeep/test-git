@@ -1,14 +1,11 @@
 name: Release
 
 on:
-  # Generate an alpha every day if there are changes in the master branch
   schedule:
     - cron: "0 0 * * *"
 
   workflow_dispatch:
     inputs:
-      # Note: `releaseType` will be set to an empty string when automatically run without human action (via the cronjob).
-      #       In that case, it means we want to generate an alpha.
       releaseType:
         description: 'Set to "release" for a beta release.'
         required: false
@@ -35,35 +32,33 @@ jobs:
       - name: Fetch all history for all branches and tags
         run: git fetch --unshallow --tags --prune --recurse-submodules=on-demand --quiet
 
-      - name: Get the latest commit SHA on master branch
+      - name: Get the latest commit SHA and date on master branch
         id: latest_commit
-        run: echo "sha=$(git rev-parse origin/main)" >> $GITHUB_STATE
+        run: |
+          latest_sha=$(git rev-parse origin/main)
+          latest_date=$(git show -s --format=%ci $latest_sha | cut -d' ' -f1)
+          echo "sha=$latest_sha" >> $GITHUB_STATE
+          echo "date=$latest_date" >> $GITHUB_STATE
+          echo "latest_sha=$latest_sha" >> $GITHUB_OUTPUT
+          echo "latest_date=$latest_date" >> $GITHUB_OUTPUT
 
-      - name: Get the latest commit date on master branch
-        id: latest_commit_date
-        run: echo "date=$(git show -s --format=%ci $(git rev-parse origin/main) | cut -d' ' -f1)" >> $GITHUB_STATE
-
-      - name: Get the last successful commit SHA
+      - name: Get the last successful commit SHA and date
         id: last_successful_commit
         env:
-          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           last_successful_commit=$(gh run list --branch main --workflow Release --json headSha -q '.[0].headSha')
-          echo "last_successful_sha=${last_successful_commit}" >> $GITHUB_STATE
-
-      - name: Get the last successful commit date
-        id: last_successful_commit_date
-        run: |
-          last_successful_commit_date=$(git show -s --format=%ci ${last_successful_commit} | cut -d' ' -f1)
-          echo "last_successful_date=${last_successful_commit_date}" >> $GITHUB_STATE
+          last_successful_date=$(git show -s --format=%ci $last_successful_commit | cut -d' ' -f1)
+          echo "last_successful_sha=$last_successful_commit" >> $GITHUB_STATE
+          echo "last_successful_date=$last_successful_date" >> $GITHUB_STATE
+          echo "last_successful_sha=$last_successful_commit" >> $GITHUB_OUTPUT
+          echo "last_successful_date=$last_successful_date" >> $GITHUB_OUTPUT
 
       - name: Check for changes
         id: check_changes
         run: |
-          latest_sha=$(cat $GITHUB_STATE | grep 'sha' | cut -d'=' -f2)
-          last_successful_sha=$(cat $GITHUB_STATE | grep 'last_successful_sha' | cut -d'=' -f2)
-          latest_date=$(cat $GITHUB_STATE | grep 'date' | cut -d'=' -f2)
-          last_successful_date=$(cat $GITHUB_STATE | grep 'last_successful_date' | cut -d'=' -f2)
+          latest_date=$(cat $GITHUB_STATE | grep 'date=' | cut -d'=' -f2)
+          last_successful_date=$(cat $GITHUB_STATE | grep 'last_successful_date=' | cut -d'=' -f2)
           
           if [ "$latest_date" == "$last_successful_date" ]; then
             echo "Changes detected in master branch."
