@@ -37,7 +37,7 @@ jobs:
 
       - name: Get the latest commit SHA on master branch
         id: latest_commit
-        run: echo "sha=$(git rev-parse origin/master)" >> $GITHUB_STATE
+        run: echo "sha=$(git rev-parse origin/main)" >> $GITHUB_STATE
 
       - name: Get the latest commit date on master branch
         id: latest_commit_date
@@ -45,8 +45,10 @@ jobs:
 
       - name: Get the last successful commit SHA
         id: last_successful_commit
+        env:
+          GH_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
-          last_successful_commit=$(gh run list --branch master --workflow Release --json headSha -q '.[0].headSha')
+          last_successful_commit=$(gh run list --branch main --workflow Release --json headSha -q '.[0].headSha')
           echo "last_successful_sha=${last_successful_commit}" >> $GITHUB_STATE
 
       - name: Get the last successful commit date
