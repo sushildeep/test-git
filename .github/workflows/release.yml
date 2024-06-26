@@ -42,8 +42,6 @@ jobs:
           echo "latest_date=$latest_date" >> $GITHUB_ENV
           echo "Latest SHA: $latest_sha"
           echo "Latest Date: $latest_date"
-          echo "latest_sha=$latest_sha" >> $GITHUB_ENV
-          echo "latest_date=$latest_date" >> $GITHUB_ENV
 
       - name: Get the last successful commit SHA and date
         id: last_successful_commit
@@ -58,8 +56,6 @@ jobs:
           echo "last_successful_date=$last_successful_date" >> $GITHUB_ENV
           echo "Last Successful SHA: $last_successful_commit"
           echo "Last Successful Date: $last_successful_date"
-          echo "last_successful_sha=$last_successful_commit" >> $GITHUB_ENV
-          echo "last_successful_date=$last_successful_date" >> $GITHUB_ENV
 
       - name: Check for changes
         id: check_changes
@@ -68,25 +64,22 @@ jobs:
           last_successful_date=${{ env.last_successful_date }}
           if [ "$latest_date" == "$last_successful_date" ]; then
             echo "No changes in main branch since last successful run."
-            echo "false" >> $GITHUB_ENV
+            echo "::set-output name=changes::false"
           else
             echo "Changes detected in main branch."
-            echo "true" >> $GITHUB_ENV
+            echo "::set-output name=changes::true"
           fi
-        env:
-          latest_date: ${{ steps.latest_commit.outputs.latest_date }}
-          last_successful_date: ${{ steps.last_successful_commit.outputs.last_successful_date }}
 
       - name: List changes
         id: list_changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          last_successful_sha=${{ steps.last_successful_commit.outputs.last_successful_sha }}
-          latest_sha=${{ steps.latest_commit.outputs.latest_sha }}
+          last_successful_sha=${{ env.last_successful_sha }}
+          latest_sha=${{ env.latest_sha }}
           changes=$(git log --oneline $last_successful_sha..$latest_sha)
           echo "Changes list:"
           echo "$changes"
-          echo "changes_list=$changes" >> $GITHUB_ENV
+          echo "::set-output name=changes_list::$changes"
 
   release:
     runs-on: ${{ matrix.os }}
@@ -105,4 +98,4 @@ jobs:
         run: |
           echo "Proceeding with the release job."
           echo "Changes since last successful run:"
-          echo "${{ env.changes_list }}"
+          echo "${{ needs.check_changes.outputs.changes_list }}"
