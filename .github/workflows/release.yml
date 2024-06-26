@@ -43,6 +43,11 @@ jobs:
           echo "latest_sha=$latest_sha" >> $GITHUB_OUTPUT
           echo "latest_date=$latest_date" >> $GITHUB_OUTPUT
 
+      - name: Debug latest commit
+        run: |
+          echo "Latest SHA: ${{ steps.latest_commit.outputs.sha }}"
+          echo "Latest Date: ${{ steps.latest_commit.outputs.date }}"
+
       - name: Get the last successful commit SHA and date
         id: last_successful_commit
         env:
@@ -54,6 +59,11 @@ jobs:
           echo "last_successful_date=$last_successful_date" >> $GITHUB_STATE
           echo "last_successful_sha=$last_successful_commit" >> $GITHUB_OUTPUT
           echo "last_successful_date=$last_successful_date" >> $GITHUB_OUTPUT
+
+      - name: Debug last successful commit
+        run: |
+          echo "Last Successful SHA: ${{ steps.last_successful_commit.outputs.last_successful_sha }}"
+          echo "Last Successful Date: ${{ steps.last_successful_commit.outputs.last_successful_date }}"
 
       - name: Check for changes
         id: check_changes
@@ -78,6 +88,11 @@ jobs:
           changes=$(git log --oneline $last_successful_sha..$latest_sha)
           echo "changes_list=$changes" >> $GITHUB_OUTPUT
 
+      - name: Debug list changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          echo "Changes list: ${{ steps.list_changes.outputs.changes_list }}"
+
   release:
     runs-on: ${{ matrix.os }}
     needs: [check_changes]
@@ -96,5 +111,3 @@ jobs:
           echo "Proceeding with the release job."
           echo "Changes since last successful run:"
           echo "${{ needs.check_changes.outputs.changes_list }}"
-
-      # Add the rest of your steps here...
