@@ -64,10 +64,10 @@ jobs:
           last_successful_date=${{ env.last_successful_date }}
           if [ "$latest_date" == "$last_successful_date" ]; then
             echo "No changes in main branch since last successful run."
-            echo "::set-output name=changes::false"
+            echo "false" >> $GITHUB_ENV
           else
             echo "Changes detected in main branch."
-            echo "::set-output name=changes::true"
+            echo "true" >> $GITHUB_ENV
           fi
 
       - name: List changes
@@ -79,7 +79,7 @@ jobs:
           changes=$(git log --oneline $last_successful_sha..$latest_sha)
           echo "Changes list:"
           echo "$changes"
-          echo "::set-output name=changes_list::$changes"
+          echo "$changes" >> $GITHUB_ENV
 
   release:
     runs-on: ${{ matrix.os }}
@@ -98,4 +98,5 @@ jobs:
         run: |
           echo "Proceeding with the release job."
           echo "Changes since last successful run:"
-          echo "${{ needs.check_changes.outputs.changes_list }}"
+          cat $GITHUB_ENV | grep "Changes list"
+
