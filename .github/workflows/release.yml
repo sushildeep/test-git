@@ -40,8 +40,6 @@ jobs:
           latest_date=$(git show -s --format=%ci $latest_sha | cut -d' ' -f1)
           echo "latest_sha=$latest_sha" >> $GITHUB_ENV
           echo "latest_date=$latest_date" >> $GITHUB_ENV
-          echo "::set-output name=latest_sha::$latest_sha"
-          echo "::set-output name=latest_date::$latest_date"
           echo "Latest SHA: $latest_sha"
           echo "Latest Date: $latest_date"
 
@@ -54,32 +52,31 @@ jobs:
           last_successful_date=$(git show -s --format=%ci $last_successful_commit | cut -d' ' -f1)
           echo "last_successful_sha=$last_successful_commit" >> $GITHUB_ENV
           echo "last_successful_date=$last_successful_date" >> $GITHUB_ENV
-          echo "::set-output name=last_successful_sha::$last_successful_commit"
-          echo "::set-output name=last_successful_date::$last_successful_date"
           echo "Last Successful SHA: $last_successful_commit"
           echo "Last Successful Date: $last_successful_date"
 
       - name: Check for changes
         id: check_changes
         run: |
-          latest_date=${{ steps.latest_commit.outputs.latest_date }}
-          last_successful_date=${{ steps.last_successful_commit.outputs.last_successful_date }}
           if [ "$latest_date" == "$last_successful_date" ]; then
             echo "No changes in main branch since last successful run."
-            echo "::set-output name=changes::false"
+            echo "changes=false" >> $GITHUB_OUTPUT
           else
             echo "Changes detected in main branch."
-            echo "::set-output name=changes::true"
+            echo "changes=true" >> $GITHUB_OUTPUT
           fi
+        env:
+          latest_date: ${{ env.latest_date }}
+          last_successful_date: ${{ env.last_successful_date }}
 
       - name: List changes
         id: list_changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          last_successful_sha=${{ steps.last_successful_commit.outputs.last_successful_sha }}
-          latest_sha=${{ steps.latest_commit.outputs.latest_sha }}
+          last_successful_sha=$(echo ${{ env.last_successful_sha }})
+          latest_sha=$(echo ${{ env.latest_sha }})
           changes=$(git log --oneline $last_successful_sha..$latest_sha)
-          echo "::set-output name=changes_list::$changes"
+          echo "changes_list=$changes" >> $GITHUB_OUTPUT
           echo "Changes list: $changes"
 
   release:
