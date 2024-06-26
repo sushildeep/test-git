@@ -50,6 +50,8 @@ jobs:
         run: |
           last_successful_commit=$(gh run list --branch main --workflow Release --json headSha -q '.[0].headSha')
           last_successful_date=$(git show -s --format=%ci $last_successful_commit | cut -d' ' -f1)
+          # Force the date to be different for testing
+          last_successful_date="2024-06-25"
           echo "last_successful_sha=$last_successful_commit" >> $GITHUB_ENV
           echo "last_successful_date=$last_successful_date" >> $GITHUB_ENV
           echo "Last Successful SHA: $last_successful_commit"
