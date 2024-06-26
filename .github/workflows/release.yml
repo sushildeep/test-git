@@ -33,7 +33,7 @@ jobs:
       - name: Fetch all history for all branches and tags
         run: git fetch --unshallow --tags --prune --recurse-submodules=on-demand --quiet
 
-      - name: Get the latest commit SHA and date on master branch
+      - name: Get the latest commit SHA and date on main branch
         id: latest_commit
         run: |
           latest_sha=$(git rev-parse origin/main)
@@ -62,10 +62,10 @@ jobs:
           last_successful_date=$(grep 'last_successful_date=' $GITHUB_STATE | cut -d'=' -f2)
 
           if [ "$latest_date" == "$last_successful_date" ]; then
-            echo "No changes in master branch since last successful run."
+            echo "No changes in main branch since last successful run."
             echo "changes=false" >> $GITHUB_OUTPUT
           else
-            echo "Changes detected in master branch."
+            echo "Changes detected in main branch."
             echo "changes=true" >> $GITHUB_OUTPUT
           fi
 
