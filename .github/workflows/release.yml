@@ -66,15 +66,15 @@ jobs:
             echo "changes=true" >> $GITHUB_OUTPUT
           fi
         env:
-          latest_date: ${{ steps.latest_commit.outputs.latest_date }}
-          last_successful_date: ${{ steps.last_successful_commit.outputs.last_successful_date }}
+          latest_date: ${{ env.latest_date }}
+          last_successful_date: ${{ env.last_successful_date }}
 
       - name: List changes
         id: list_changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          last_successful_sha=$(echo ${{ steps.last_successful_commit.outputs.last_successful_sha }})
-          latest_sha=$(echo ${{ steps.latest_commit.outputs.latest_sha }})
+          last_successful_sha=$(echo ${{ env.last_successful_sha }})
+          latest_sha=$(echo ${{ env.latest_sha }})
           changes=$(git log --oneline $last_successful_sha..$latest_sha)
           echo "changes_list=$changes" >> $GITHUB_OUTPUT
           echo "Changes list: $changes"
