@@ -40,9 +40,6 @@ jobs:
           latest_date=$(git show -s --format=%ci $latest_sha | cut -d' ' -f1)
           echo "latest_sha=$latest_sha" >> $GITHUB_ENV
           echo "latest_date=$latest_date" >> $GITHUB_ENV
-
-      - name: Debug latest commit
-        run: |
           echo "Latest SHA: $latest_sha"
           echo "Latest Date: $latest_date"
 
@@ -55,10 +52,7 @@ jobs:
           last_successful_date=$(git show -s --format=%ci $last_successful_commit | cut -d' ' -f1)
           echo "last_successful_sha=$last_successful_commit" >> $GITHUB_ENV
           echo "last_successful_date=$last_successful_date" >> $GITHUB_ENV
-
-      - name: Debug last successful commit
-        run: |
-          echo "Last Successful SHA: $last_successful_sha"
+          echo "Last Successful SHA: $last_successful_commit"
           echo "Last Successful Date: $last_successful_date"
 
       - name: Check for changes
@@ -71,18 +65,19 @@ jobs:
             echo "Changes detected in main branch."
             echo "changes=true" >> $GITHUB_OUTPUT
           fi
+        env:
+          latest_date: ${{ steps.latest_commit.outputs.latest_date }}
+          last_successful_date: ${{ steps.last_successful_commit.outputs.last_successful_date }}
 
       - name: List changes
         id: list_changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |
+          last_successful_sha=$(echo ${{ steps.last_successful_commit.outputs.last_successful_sha }})
+          latest_sha=$(echo ${{ steps.latest_commit.outputs.latest_sha }})
           changes=$(git log --oneline $last_successful_sha..$latest_sha)
           echo "changes_list=$changes" >> $GITHUB_OUTPUT
-
-      - name: Debug list changes
-        if: steps.check_changes.outputs.changes == 'true'
-        run: |
-          echo "Changes list: ${{ steps.list_changes.outputs.changes_list }}"
+          echo "Changes list: $changes"
 
   release:
     runs-on: ${{ matrix.os }}
