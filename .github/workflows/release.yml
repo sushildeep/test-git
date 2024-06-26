@@ -38,15 +38,13 @@ jobs:
         run: |
           latest_sha=$(git rev-parse origin/main)
           latest_date=$(git show -s --format=%ci $latest_sha | cut -d' ' -f1)
-          echo "sha=$latest_sha" >> $GITHUB_STATE
-          echo "date=$latest_date" >> $GITHUB_STATE
-          echo "latest_sha=$latest_sha" >> $GITHUB_OUTPUT
-          echo "latest_date=$latest_date" >> $GITHUB_OUTPUT
+          echo "latest_sha=$latest_sha" >> $GITHUB_ENV
+          echo "latest_date=$latest_date" >> $GITHUB_ENV
 
       - name: Debug latest commit
         run: |
-          echo "Latest SHA: ${{ steps.latest_commit.outputs.sha }}"
-          echo "Latest Date: ${{ steps.latest_commit.outputs.date }}"
+          echo "Latest SHA: $latest_sha"
+          echo "Latest Date: $latest_date"
 
       - name: Get the last successful commit SHA and date
         id: last_successful_commit
@@ -55,22 +53,17 @@ jobs:
         run: |
           last_successful_commit=$(gh run list --branch main --workflow Release --json headSha -q '.[0].headSha')
           last_successful_date=$(git show -s --format=%ci $last_successful_commit | cut -d' ' -f1)
-          echo "last_successful_sha=$last_successful_commit" >> $GITHUB_STATE
-          echo "last_successful_date=$last_successful_date" >> $GITHUB_STATE
-          echo "last_successful_sha=$last_successful_commit" >> $GITHUB_OUTPUT
-          echo "last_successful_date=$last_successful_date" >> $GITHUB_OUTPUT
+          echo "last_successful_sha=$last_successful_commit" >> $GITHUB_ENV
+          echo "last_successful_date=$last_successful_date" >> $GITHUB_ENV
 
       - name: Debug last successful commit
         run: |
-          echo "Last Successful SHA: ${{ steps.last_successful_commit.outputs.last_successful_sha }}"
-          echo "Last Successful Date: ${{ steps.last_successful_commit.outputs.last_successful_date }}"
+          echo "Last Successful SHA: $last_successful_sha"
+          echo "Last Successful Date: $last_successful_date"
 
       - name: Check for changes
         id: check_changes
         run: |
-          latest_date=$(grep 'date=' $GITHUB_STATE | cut -d'=' -f2)
-          last_successful_date=$(grep 'last_successful_date=' $GITHUB_STATE | cut -d'=' -f2)
-
           if [ "$latest_date" == "$last_successful_date" ]; then
             echo "No changes in main branch since last successful run."
             echo "changes=false" >> $GITHUB_OUTPUT
@@ -83,8 +76,6 @@ jobs:
         id: list_changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          last_successful_sha=$(grep 'last_successful_sha=' $GITHUB_STATE | cut -d'=' -f2)
-          latest_sha=$(grep 'sha=' $GITHUB_STATE | cut -d'=' -f2)
           changes=$(git log --oneline $last_successful_sha..$latest_sha)
           echo "changes_list=$changes" >> $GITHUB_OUTPUT
 
