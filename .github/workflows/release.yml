@@ -1,38 +1,33 @@
 name: Release
-
-on:
+'on':
   schedule:
-    - cron: "0 0 * * *"
-
+    - cron: 0 0 * * *
   workflow_dispatch:
     inputs:
       releaseType:
-        description: 'Set to "release" for a beta release.'
+        description: Set to "release" for a beta release.
         required: false
-        default: "alpha"
+        default: alpha
       signExe:
-        description: 'Set to "true" to generate and sign .exe on Windows.'
+        description: Set to "true" to generate and sign .exe on Windows.
         required: false
-        default: "false"
-
+        default: 'false'
 env:
-  GITHUB_USERNAME: "sushil"
-  GITHUB_EMAILID: "sushildeep@hotmail.com"
-
+  GITHUB_USERNAME: sushil
+  GITHUB_EMAILID: sushildeep@hotmail.com
 jobs:
   check_changes:
     runs-on: ubuntu-latest
     outputs:
-      changes: ${{ steps.check_changes.outputs.changes }}
-      changes_list: ${{ steps.list_changes.outputs.changes_list }}
-
+      changes: '${{ steps.check_changes.outputs.changes }}'
+      changes_list: '${{ steps.list_changes.outputs.changes_list }}'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Fetch all history for all branches and tags
-        run: git fetch --unshallow --tags --prune --recurse-submodules=on-demand --quiet
-
+        run: >-
+          git fetch --unshallow --tags --prune --recurse-submodules=on-demand
+          --quiet
       - name: Get the latest commit SHA and date on main branch
         id: latest_commit
         run: |
@@ -42,19 +37,24 @@ jobs:
           echo "latest_date=$latest_date" >> $GITHUB_ENV
           echo "Latest SHA: $latest_sha"
           echo "Latest Date: $latest_date"
-
       - name: Get the last successful commit SHA and date
         id: last_successful_commit
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          last_successful_commit=$(gh run list --branch main --workflow Release --json headSha -q '.[0].headSha')
-          last_successful_date=$(git show -s --format=%ci $last_successful_commit | cut -d' ' -f1)
-          echo "last_successful_sha=$last_successful_commit" >> $GITHUB_ENV
-          echo "last_successful_date=$last_successful_date" >> $GITHUB_ENV
-          echo "Last Successful SHA: $last_successful_commit"
-          echo "Last Successful Date: $last_successful_date"
+          GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: >
+          last_successful_commit=$(gh run list --branch main --workflow Release
+          --json headSha -q '.[0].headSha')
 
+          last_successful_date=$(git show -s --format=%ci
+          $last_successful_commit | cut -d' ' -f1)
+
+          echo "last_successful_sha=$last_successful_commit" >> $GITHUB_ENV
+
+          echo "last_successful_date=$last_successful_date" >> $GITHUB_ENV
+
+          echo "Last Successful SHA: $last_successful_commit"
+
+          echo "Last Successful Date: $last_successful_date"
       - name: Check for changes
         id: check_changes
         run: |
@@ -67,7 +67,6 @@ jobs:
             echo "Changes detected in main branch."
             echo "changes=true" >> $GITHUB_ENV
           fi
-
       - name: List changes
         id: list_changes
         if: steps.check_changes.outputs.changes == 'true'
@@ -78,22 +77,28 @@ jobs:
           echo "Changes list:"
           echo "$changes"
           echo "changes_list=$changes" >> $GITHUB_ENV
-
-  release:
-    runs-on: ${{ matrix.os }}
-    needs: [check_changes]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, 'macos-latest']
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Proceed if there are changes
-        if: needs.check_changes.outputs.changes == 'true'
-        run: |
-          echo "Proceeding with the release job."
-          echo "Changes since last successful run:"
-          cat $GITHUB_ENV | grep "Changes list"
+release:
+  runs-on: '${{ matrix.os }}'
+  needs:
+    - check_changes
+  strategy:
+    fail-fast: false
+    matrix:
+      os:
+        - ubuntu-latest
+        - windows-latest
+        - macos-latest
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Proceed if there are changes
+      if: needs.check_changes.outputs.changes == 'true'
+      run: |
+        echo "Proceeding with the release job."
+        echo "Changes since last successful run:"
+        echo "${{ needs.check_changes.outputs.changes_list }}"
+    - name: Sign Windows Executable
+      if: matrix.os == 'windows-latest' && github.event.inputs.signExe == 'true'
+      run: |
+        echo "Signing Windows executable..."
+        # Add your signing logic here
