@@ -16,8 +16,8 @@ on:
         default: "false"
 
 env:
-  GITHUB_USERNAME: "nuxeodrive"
-  GITHUB_EMAILID: "drive@hyland.com"
+  GITHUB_USERNAME: "sushil"
+  GITHUB_EMAILID: "sushildeep@hotmail.com"
 
 jobs:
   check_changes:
