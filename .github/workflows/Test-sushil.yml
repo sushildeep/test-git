@@ -1,16 +1,17 @@
-name: dgdhgdhdh
+name: Manual CI Pipeline (Multi-Branch)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Enables manual trigger from any branch via GitHub UI
+
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout code from triggered branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}  # Ensures it uses the branch you're triggering from
+          ref: ${{ github.ref }}  # Ensures correct branch is checked out when triggered manually
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
