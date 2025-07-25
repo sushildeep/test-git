@@ -1,0 +1,31 @@
+name: pipeline=Sushil
+
+on:
+  workflow_dispatch:  # Enables manual run from any branch
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}  # Ensures it uses the branch you're triggering from
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy (mock)
+        run: echo "Deploying application..."
